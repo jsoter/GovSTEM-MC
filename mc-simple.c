@@ -257,7 +257,7 @@ while (i_photon < Nphotons);
 /**** SAVE
    Convert data to relative fluence rate [cm^-2] and save to file called "mcmin321.out".
 *****/
-target = fopen("mc321.out", "w");
+target = fopen("mc-simple.out", "w");
 
 /* print header */
 fprintf(target, "number of photons = %f\n", Nphotons);
