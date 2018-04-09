@@ -1127,4 +1127,3 @@ void WriteResult(InputStruct In_Parm,
   
   fclose(file);
 }
-

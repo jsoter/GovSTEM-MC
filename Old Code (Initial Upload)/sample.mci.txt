@@ -18,12 +18,12 @@ sample.mco 	A            	# output file name, ASCII.
 0.01	0.01               	# dz, dr [cm]
 40	50	1                	# No. of dz, dr, da.
 
-1                        	# Number of layers
+3                        	# Number of layers
 #n	mua	mus	g	d         	# One line for each layer
 1                         	# n for medium above
-1.37	0	100	0.9	0.1    	# layer 1
-#1.37	1	10	0.0	0.1   	 layer 2
-#1.37	2	10	0.7	0.2  	 layer 3
+1.37	1	100	0.9	0.1    	# layer 1
+1.37	1	10	0.0	0.1   	# layer 2
+1.37	2	10	0.7	0.2  	# layer 3
 1                        	# n for medium below
 
 #### SPECIFY DATA FOR RUN 2

@@ -20,11 +20,9 @@
 #if THINKCPROFILER
 #include <profile.h>
 #include <console.h>
-
 #endif
 
 #include "mcml.h"
-
 
 /*	Declare before they are used in main(). */
 FILE *GetFile(char *);
@@ -38,7 +36,6 @@ void LaunchPhoton(double, LayerStruct *, PhotonStruct *);
 void HopDropSpin(InputStruct  *,PhotonStruct *,OutStruct *);
 void SumScaleResult(InputStruct, OutStruct *);
 void WriteResult(InputStruct, OutStruct, char *);
-
 
 
 /***********************************************************
@@ -181,71 +178,6 @@ void DoOneRun(short NumRuns, InputStruct *In_Ptr)
   FreeData(*In_Ptr, &out_parm);
 }
 
-void readAnisotropy(MultiScatterStruct *Multiptr) {
-
-  FILE anisotropyInput = *fopen("anisotropyInput.txt","r");
-  char buffer1[1000];
-  fgets(buffer1, 1000, &anisotropyInput);
-  double diameter[40];
-  char* temp1 = strtok(buffer1, ",");
-  diameter[0] = atoi(temp1);
-  for (int counter1 = 1; counter1 < 40; counter1++){
-    temp1 = strtok (NULL, " ,.-");
-    diameter[counter1] = atoi(temp1);
-  }
-
-  char buffer2[1000];
-  fgets(buffer2, 1000, &anisotropyInput);
-  
-  double percentages[40];
-  char* temp2 = strtok(buffer2, ",");
-  percentages[0] = atoi(temp2);
-  for (int counter2 = 1; counter2 < 40; counter2++){
-    temp2 = strtok (NULL, " ,.-");
-    percentages[counter2] = atoi(temp2);
-  }
-
-  char buffer3[10000];
-  fgets(buffer3, 10000, &anisotropyInput);
-  
-  double anisotropy[40];
-  char* temp3 = strtok(buffer3, ",");
-  anisotropy[0] = atof(temp3);
-  for (int counter3 = 1; counter3 < 40; counter3++){
-    temp3 = strtok (NULL, ",");
-    anisotropy[counter3] = atof(temp3);
-    Multiptr->anisotropyArray[counter3] = anisotropy[counter3];
-  }
-
-  char buffer4[1000];
-  fgets(buffer4, 1000, &anisotropyInput);
-  Multiptr->l_s = atoi(buffer4);
- 
-
-  double volumes[40];
-  for (int counter4 = 0; counter4 < 40; counter4++) {
-    volumes[counter4] = pow(diameter[counter4], 3) / 6 * PI; 
-  }
-  
-
-  double percentageByVolume[40];
-  double totalVolume = 0;
-  for (int counter5 = 0; counter5 < 40; counter5++) {
-    percentageByVolume[counter5] = (volumes[counter5] * percentages[counter5]);
-    totalVolume += percentageByVolume[counter5];
-  }
-
-  double percentageHit[40];
-  for (int counter6 = 0; counter6 < 40; counter6++) {
-    percentageHit[counter6] = percentageByVolume[counter6] / totalVolume;
-    Multiptr->percentagesHit[counter6] = percentageHit[counter6];
-  }
- 
-  fclose(&anisotropyInput); 
-}
-
-
-
 /***********************************************************
  *	The argument to the command line is filename, if any.
  *	Macintosh does not support command line.
@@ -256,9 +188,7 @@ char main(int argc, char *argv[])
   FILE *input_file_ptr;
   short num_runs;	/* number of independent runs. */
   InputStruct in_parm;
-  MultiScatterStruct a;
-  readAnisotropy(&a);
-  printf("%f",a.anisotropyArray[39]);
+
   ShowVersion("Version 1.2, 1993");
   GetFnameFromArgv(argc, argv, input_filename);
   input_file_ptr = GetFile(input_filename);
@@ -267,7 +197,7 @@ char main(int argc, char *argv[])
   
   while(num_runs--)  {
     ReadParm(input_file_ptr, &in_parm);
-	 DoOneRun(num_runs, &in_parm);
+	DoOneRun(num_runs, &in_parm);
   }
   
   fclose(input_file_ptr);

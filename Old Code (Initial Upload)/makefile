@@ -12,7 +12,7 @@ OBJS = mcmlmain.o mcmlgo.o mcmlio.o mcmlnr.o
 
 all : mcml
 
-mcml: $(OBJS)
+mcml:	$(OBJS)
 	$(RM) $@
 	$(CC) -o $@ $(OBJS) $(LOCAL_LIBRARIES)
 

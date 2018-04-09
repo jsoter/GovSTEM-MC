@@ -194,14 +194,6 @@ typedef struct {
   double    Tt;		/* total transmittance. [-] */
 } OutStruct;
 
-typedef struct{
-
-  double anisotropyArray[40];
-  double percentagesHit[40];
-  double l_s;
-
-} MultiScatterStruct;
-
 /***********************************************************
  *	Routine prototypes for dynamic memory allocation and 
  *	release of arrays and matrices.

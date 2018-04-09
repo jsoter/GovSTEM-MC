@@ -738,4 +738,3 @@ void HopDropSpin(InputStruct  *  In_Ptr,
   if( Photon_Ptr->w < In_Ptr->Wth && !Photon_Ptr->dead) 
     Roulette(Photon_Ptr);
 }
-
