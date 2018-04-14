@@ -35,7 +35,7 @@ void InitOutputData(InputStruct, OutStruct *);
 void FreeData(InputStruct, OutStruct *);
 double Rspecular(LayerStruct * );
 void LaunchPhoton(double, LayerStruct *, PhotonStruct *);
-void HopDropSpin(InputStruct  *,PhotonStruct *,OutStruct *);
+void HopDropSpin(InputStruct  *  In_Ptr, PhotonStruct *  Photon_Ptr, OutStruct    *  Out_Ptr, MultiScatterStruct multi);
 void SumScaleResult(InputStruct, OutStruct *);
 void WriteResult(InputStruct, OutStruct, char *);
 
@@ -145,7 +145,7 @@ void GetFnameFromArgv(int argc,
 /***********************************************************
  *	Execute Monte Carlo simulation for one independent run.
  ****/
-void DoOneRun(short NumRuns, InputStruct *In_Ptr)
+void DoOneRun(short NumRuns, InputStruct *In_Ptr, MultiScatterStruct multi)
 {
   register long i_photon;	
 	/* index to photon. register for speed.*/
@@ -169,7 +169,7 @@ void DoOneRun(short NumRuns, InputStruct *In_Ptr)
       photon_rep *= 10;
     }
     LaunchPhoton(out_parm.Rsp, In_Ptr->layerspecs, &photon);
-    do  HopDropSpin(In_Ptr, &photon, &out_parm);
+    do  HopDropSpin(In_Ptr, &photon, &out_parm, multi);
     while (!photon.dead);
   } while(--i_photon);
     
@@ -256,18 +256,18 @@ char main(int argc, char *argv[])
   FILE *input_file_ptr;
   short num_runs;	/* number of independent runs. */
   InputStruct in_parm;
-  MultiScatterStruct a;
-  readAnisotropy(&a);
-  printf("%f",a.anisotropyArray[39]);
+  MultiScatterStruct multi;
+  readAnisotropy(&multi);
+  printf("%f",multi.anisotropyArray[39]);
   ShowVersion("Version 1.2, 1993");
   GetFnameFromArgv(argc, argv, input_filename);
   input_file_ptr = GetFile(input_filename);
   CheckParm(input_file_ptr, &in_parm);	
   num_runs = ReadNumRuns(input_file_ptr);
-  
+  srand(time(NULL));
   while(num_runs--)  {
     ReadParm(input_file_ptr, &in_parm);
-	 DoOneRun(num_runs, &in_parm);
+	 DoOneRun(num_runs, &in_parm, multi);
   }
   
   fclose(input_file_ptr);

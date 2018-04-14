@@ -213,6 +213,7 @@ void Spin(double g,
   double uz = Photon_Ptr->uz;
   double psi;
 
+
   cost = SpinTheta(g);
   sint = sqrt(1.0 - cost*cost);	
 	/* sqrt() is faster than sin(). */
@@ -702,9 +703,32 @@ void HopInGlass(InputStruct  * In_Ptr,
  *	site.  If the unfinished stepsize is still too long, 
  *	repeat the above process.  
  ****/
+
+ double anisotropyRoulette(MultiScatterStruct multi) {
+
+  int length = sizeof(multi.percentagesHit) / sizeof(double);
+  double total_sum = 0;
+
+  for (int i = 0; i < length; i++) {
+    total_sum += multi.percentagesHit[i];
+  }
+
+  double randomnumber = rand() * total_sum;
+  double sumnum = 0;
+  int counter = 0;
+
+  while(randomnumber >= sumnum) {
+    sumnum += multi.percentagesHit[counter];
+    counter++;
+  }
+
+  return multi.anisotropyArray[counter-1];
+}
+
 void HopDropSpinInTissue(InputStruct  *  In_Ptr,
 						 PhotonStruct *  Photon_Ptr,
-						 OutStruct    *  Out_Ptr)
+						 OutStruct    *  Out_Ptr, 
+             MultiScatterStruct multi)
 {
   StepSizeInTissue(Photon_Ptr, In_Ptr);
   
@@ -715,7 +739,8 @@ void HopDropSpinInTissue(InputStruct  *  In_Ptr,
   else {
     Hop(Photon_Ptr);
     Drop(In_Ptr, Photon_Ptr, Out_Ptr);
-    Spin(In_Ptr->layerspecs[Photon_Ptr->layer].g, 
+    double g = anisotropyRoulette(multi);
+    Spin(g, 
 		Photon_Ptr);
   }
 }
@@ -724,7 +749,8 @@ void HopDropSpinInTissue(InputStruct  *  In_Ptr,
  ****/
 void HopDropSpin(InputStruct  *  In_Ptr,
 				 PhotonStruct *  Photon_Ptr,
-				 OutStruct    *  Out_Ptr)
+				 OutStruct    *  Out_Ptr, 
+         MultiScatterStruct multi)
 {
   short layer = Photon_Ptr->layer;
 
@@ -733,9 +759,10 @@ void HopDropSpin(InputStruct  *  In_Ptr,
 	/* glass layer. */
     HopInGlass(In_Ptr, Photon_Ptr, Out_Ptr);
   else
-    HopDropSpinInTissue(In_Ptr, Photon_Ptr, Out_Ptr);
+    HopDropSpinInTissue(In_Ptr, Photon_Ptr, Out_Ptr, multi);
   
   if( Photon_Ptr->w < In_Ptr->Wth && !Photon_Ptr->dead) 
     Roulette(Photon_Ptr);
 }
+
 
